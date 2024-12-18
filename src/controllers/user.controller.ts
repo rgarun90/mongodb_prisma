@@ -47,13 +47,14 @@ export async function getUser(req: Request, res: Response) {
             message: 'Invalid UserId',
             data: [],
         });
-    } else {
-        res.json({
-            status: true,
-            message: 'User fetched successfully',
-            data: user,
-        });
+        return;
     }
+
+    res.json({
+        status: true,
+        message: 'User fetched successfully',
+        data: user,
+    });
 }
 
 //Deleting a User
@@ -71,18 +72,19 @@ export async function deleteUser(req: Request, res: Response) {
                 status: false,
                 message: 'User Not Found',
             });
-        } else {
-            await prisma.user.delete({
-                where: {
-                    id: userId,
-                },
-            });
-
-            res.status(201).json({
-                status: true,
-                message: 'User Deleted Successfully',
-            });
+            return;
         }
+
+        await prisma.user.delete({
+            where: {
+                id: userId,
+            },
+        });
+
+        res.status(201).json({
+            status: true,
+            message: 'User Deleted Successfully',
+        });
     } catch {
         res.status(500).json({
             status: false,
@@ -107,20 +109,21 @@ export async function updateUser(req: Request, res: Response) {
                 status: false,
                 message: 'User not found',
             });
-        } else {
-            const updatedUser = await prisma.user.update({
-                where: {
-                    id: userId,
-                },
-                data: req.body,
-            });
-
-            res.json({
-                status: true,
-                message: 'User Successfully updated',
-                data: updatedUser,
-            });
+            return;
         }
+
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: req.body,
+        });
+
+        res.status(201).json({
+            status: true,
+            message: 'User Successfully updated',
+            data: updatedUser,
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({
